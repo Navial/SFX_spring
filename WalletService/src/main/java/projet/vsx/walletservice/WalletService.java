@@ -1,5 +1,7 @@
 package projet.vsx.walletservice;
 
+import java.util.HashSet;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,18 +21,36 @@ public class WalletService {
     public double getNetWorth(String username){
         // Get a set of wallet with all the positions of the user
         Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
-        Double netWorth = 0.0;
+        if(wallets == null)
+            return -1;
+
+        double netWorth = 0.0;
         for ( Wallet wallet : wallets ){
             Double price = priceProxy.getPriceForTicker(wallet.getSymbol()).getValue();
             netWorth += wallet.getQuantity() * price;
         }
-
         return netWorth;
     }
 
     //@GetMapping("/wallet/{username}")
     //public ResponseEntity<PositionValue> getOpenPositions(){
+    public Set<PositionValue> getOpenPositions(String username){
+        Set<PositionValue> positions = new HashSet<>();
+        Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
+        // Investor not found
+        if(wallets == null)
+            return null;
 
+        for(Wallet wallet : wallets){
+            PositionValue position = new PositionValue();
+            Double price = priceProxy.getPriceForTicker(wallet.getSymbol()).getValue();
+            position.setPrice(price);
+            position.setSymbol(wallet.getSymbol());
+            position.setQuantity(wallet.getQuantity());
+            positions.add(position);
+        }
+        return positions;
+    }
 
     //@PostMapping("/wallet/{username}")
     //public ResponseEntity<Position> addNewPosition(){
