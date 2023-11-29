@@ -1,8 +1,11 @@
 package projet.vsx.walletservice;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 
 @AllArgsConstructor
@@ -24,9 +27,6 @@ public class WalletController {
     @GetMapping("/wallet/{username}")
     public ResponseEntity<Set<PositionValue>> getOpenPositions(@PathVariable String username){
         Set<PositionValue> positions = service.getOpenPositions(username);
-        if(positions == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
         return new ResponseEntity<>(positions, HttpStatus.OK);
     }
 

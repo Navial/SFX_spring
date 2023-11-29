@@ -3,6 +3,7 @@ package projet.vsx.walletservice;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -31,7 +32,7 @@ public class WalletService {
     //public ResponseEntity<PositionValue> getOpenPositions(){
     public Set<PositionValue> getOpenPositions(String username){
         Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
-        if(wallets != null)
+        if(wallets.isEmpty())
             return null;
         Set<PositionValue> positions = new HashSet<>();
         for ( Wallet wallet : wallets ){
@@ -44,11 +45,10 @@ public class WalletService {
         return positions;
     }
 
-    // TODO
     public Set<Wallet> addPositions(String username, Set<Position> newPositions){
-        Set<Wallet> positions =  repository.getAllByInvestorUsername(username);
-        if(positions != null)
+        if(newPositions.isEmpty())
             return null;
+        Set<Wallet> positions =  repository.getAllByInvestorUsername(username);
 
         for(Position position : newPositions){
             for ( Wallet wallet : positions ){
