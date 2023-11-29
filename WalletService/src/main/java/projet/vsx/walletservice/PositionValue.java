@@ -11,6 +11,6 @@ public class PositionValue {
 
     private String symbol;
     private Integer quantity;
-    private double prices;
+    private double price;
 
 }

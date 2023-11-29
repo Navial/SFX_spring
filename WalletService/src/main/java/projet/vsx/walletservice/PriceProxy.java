@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "price")
 public interface PriceProxy {
     @GetMapping("/price/{ticker}")
-    be.vinci.ipl.price.Price getPriceForTicker(@Param("ticker") String ticker);
+    be.vinci.ipl.price.Price getPriceForTicker(@Param("ticker") @PathVariable String ticker);
 
 }

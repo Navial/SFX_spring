@@ -3,7 +3,6 @@ package projet.vsx.walletservice;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -17,14 +16,14 @@ public class WalletService {
     public double getNetWorth(String username){
         // Get a set of wallet with all the positions of the user
         Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
-        if(wallets != null)
+        if(wallets == null)
             return -1;
-        Double netWorth = 0.0;
+
+        double netWorth = 0.0;
         for ( Wallet wallet : wallets ){
             Double price = priceProxy.getPriceForTicker(wallet.getSymbol()).getValue();
             netWorth += wallet.getQuantity() * price;
         }
-
         return netWorth;
     }
 
