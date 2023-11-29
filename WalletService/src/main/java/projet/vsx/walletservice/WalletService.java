@@ -1,11 +1,9 @@
 package projet.vsx.walletservice;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -19,6 +17,8 @@ public class WalletService {
     public double getNetWorth(String username){
         // Get a set of wallet with all the positions of the user
         Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
+        if(wallets != null)
+            return -1;
         Double netWorth = 0.0;
         for ( Wallet wallet : wallets ){
             Double price = priceProxy.getPriceForTicker(wallet.getSymbol()).getValue();
@@ -30,10 +30,41 @@ public class WalletService {
 
     //@GetMapping("/wallet/{username}")
     //public ResponseEntity<PositionValue> getOpenPositions(){
+    public Set<PositionValue> getOpenPositions(String username){
+        Set<Wallet> wallets =  repository.getAllByInvestorUsername(username);
+        if(wallets != null)
+            return null;
+        Set<PositionValue> positions = new HashSet<>();
+        for ( Wallet wallet : wallets ){
+            PositionValue pv = new PositionValue();
+            pv.setSymbol(wallet.getSymbol());
+            pv.setQuantity(wallet.getQuantity());
+            pv.setSymbol(wallet.getSymbol());
+            positions.add(pv);
+        }
+        return positions;
+    }
 
+    // TODO
+    public Set<Wallet> addPositions(String username, Set<Position> newPositions){
+        Set<Wallet> positions =  repository.getAllByInvestorUsername(username);
+        if(positions != null)
+            return null;
 
-    //@PostMapping("/wallet/{username}")
-    //public ResponseEntity<Position> addNewPosition(){
-
+        for(Position position : newPositions){
+            for ( Wallet wallet : positions ){
+                // Already possessed
+                if(position.getSymbol().equals(wallet.getSymbol())){
+                    // yes, update its quantity
+                    position.setQuantity(position.getQuantity()+ wallet.getQuantity());
+                    break;
+                }
+            }
+            // Add this new position.
+            Wallet wallet = new Wallet(username, position.getSymbol(), position.getQuantity());
+            repository.save(wallet);
+        }
+        return positions;
+    }
 
 }

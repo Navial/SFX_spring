@@ -2,15 +2,6 @@ package projet.vsx.walletservice;
 
 import lombok.*;
 
-/*
-* Simple POJO / DTO
-* Sera utiliser pour ajouter une ou plusieurs positions.
-* Ce sera cet objet qui sera envoyé pour indiquer le symbole
-* et la quantité achetée de cette action.
-*
-* POST/wallet{username}
- */
-
 @Getter
 @Setter
 @ToString
